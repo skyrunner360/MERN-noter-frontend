@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import noteContext from "../Context/notes/noteContext";
 
-const AddNotes = () => {
+const AddNotes = (props) => {
   const context = useContext(noteContext);
   const { addNote } = context;
 
@@ -18,6 +18,7 @@ const AddNotes = () => {
       description: "",
       tag: "",
     })
+    props.showAlert("Added Successfully","info");
   };
   const onChange = (e) => {
     // Using spread operator. persist the value of notes but add these values to it meaning change the name according to it's value.

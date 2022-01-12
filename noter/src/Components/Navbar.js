@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link, useLocation } from "react-router-dom";
+import React, {useState, useEffect} from 'react'
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     let location = useLocation();
@@ -8,6 +8,28 @@ const Navbar = () => {
     // useEffect(() => {
     //     console.log(location.pathname);   
     // }, [location])
+    const history= useNavigate()
+    const handlelogout = ()=>{
+      localStorage.removeItem('token');
+      history("/login");
+    }
+    useEffect(() => {
+      if(location.pathname==="/"){
+        userData()
+      }
+    },[location])
+    const [user, setUser] = useState({})
+    const userData = async ()=>{
+      const response = await fetch(`http://localhost:5000/api/auth/getuser`, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': localStorage.getItem('token')
+        },
+      });
+      const json = await response.json();
+      setUser(json)
+    }
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -26,10 +48,27 @@ const Navbar = () => {
           <Link className={`nav-link ${location.pathname==="/about"? "active":"" }`} to="/about">About</Link>
         </li>
       </ul>
-      <form className="d-flex">
+      {!localStorage.getItem('token')?<form className="d-flex">
       <Link className="btn btn-success mx-1" to='/login' role="button">Login</Link>
       <Link className="btn btn-primary mx-1" to='/signup' role="button">Signup</Link>
-      </form>
+      </form>:
+      <>
+      <div className="accordion accordion-flush" id="accordionFlushExample">
+  <div className="accordion-item">
+    <h2 className="accordion-header" id="flush-headingOne">
+      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+       Welcome {user.name} ! &nbsp;
+      </button>
+    </h2>
+    <div id="flush-collapseOne" className="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+      <div className="accordion-body">Your Email is - &nbsp;{user.email}</div>
+    </div>
+  </div>
+</div>
+
+      <button onClick={handlelogout} className='btn btn-primary'>Logout</button>
+      </>   
+      }
     </div>
   </div>
 </nav>

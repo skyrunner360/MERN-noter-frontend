@@ -1,13 +1,20 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import noteContext from "../Context/notes/noteContext";
 import AddNotes from "./AddNotes";
 import Noteitem from "./Noteitem";
 
-function Notes() {
+function Notes(props) {
+  const history = useNavigate();
   const context = useContext(noteContext);
   const { notes, getNotes, editNote } = context;
   useEffect(() => {
-    getNotes();
+    if(localStorage.getItem('token')){
+      getNotes();
+    }
+    else{
+      history("/login");
+    }
     // eslint-disable-next-line
   }, []);
   const [note, setNote] = useState({
@@ -20,11 +27,13 @@ function Notes() {
       //Clicking on the button by using current
       ref.current.click();
       setNote({id: currentNote._id,etitle: currentNote.title, edescription: currentNote.description, etag: currentNote.tag})
+      
   };
 
   const handleclick = () => {
       editNote(note.id, note.etitle, note.edescription, note.etag)
       refclose.current.click();
+      props.showAlert("Updated Successfully","info");
   };
   const onChange = (e) => {
     // Using spread operator. persist the value of notes but add these values to it meaning change the name according to it's value.
@@ -35,7 +44,7 @@ function Notes() {
   const refclose = useRef(null)
   return (
     <>
-      <AddNotes />
+      <AddNotes showAlert={props.showAlert}/>
 
       <button
         type="button"
@@ -140,7 +149,7 @@ function Notes() {
         </div>
         {notes.map((note) => {
           return (
-            <Noteitem key={note._id} updateNote={updateNote} note={note} />
+            <Noteitem showAlert={props.showAlert} key={note._id} updateNote={updateNote} note={note} />
           );
         })}
       </div>
