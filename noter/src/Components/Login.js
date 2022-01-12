@@ -1,10 +1,11 @@
 import React from 'react'
-import Notes from './Notes';
 
-export const Home = () => {
+const Login = () => {
     return (
         <div>
-        <Notes/>
+            I am Login
         </div>
     )
 }
+
+export default Login

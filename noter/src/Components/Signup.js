@@ -1,10 +1,11 @@
 import React from 'react'
-import Notes from './Notes';
 
-export const Home = () => {
+const Signup = () => {
     return (
         <div>
-        <Notes/>
+            I am Signup
         </div>
     )
 }
+
+export default Signup
